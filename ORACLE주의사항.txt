@@ -1,0 +1,27 @@
+※주의사항
+
+1.파싱순서
+①FROM
+②WHERE
+③GROUP BY
+④HAVING
+⑤SELECT
+⑥ORDER BY
+
+
+
+
+2.UPDATE/DELETE/INSERT
+
+①UPDATE/DELETE/INSERT
+③SET 
+②WHERE
+
+
+
+
+3. DB설계 굉장히 중요 
+코딩복구 가능 DB설계 잘못하면 처음부터 다시해야함
+    ↓	
+★정규화★
+

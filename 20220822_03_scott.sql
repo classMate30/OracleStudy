@@ -627,3 +627,494 @@ USING(DEPTNO);
 30	SALES	    BLAKE	2850
 30	SALES	    MARTIN	1250
 */
+
+
+
+--------------------------------------------------------------------------------
+
+
+--○ TBL_EMP 테이블에서 급여가 가장 많은 사원의
+--   사원번호, 사원명, 직종명, 급여 항목을 조회하는 쿼리문을 구성한다
+
+SELECT MAX(SAL)
+FROM TBL_EMP;
+
+SELECT *
+FROM 
+(
+    SELECT *
+    FROM TBL_EMP
+)T 
+WHERE T.SAL;
+--------------------------------------------------------------------------------
+
+--내가 푼 풀이
+SELECT T2.EMPNO"사원번호", T2.ENAME"사원명", T2.JOB"직종명", T1.급여 
+FROM 
+(
+    SELECT MAX(SAL)"급여"
+    FROM TBL_EMP
+    INTERSECT
+    SELECT SAL
+    FROM TBL_EMP
+)T1
+JOIN
+(
+    SELECT *
+    FROM TBL_EMP
+)T2
+ON T1.급여 = T2.SAL;
+
+
+--선생님 풀이
+
+--○ TBL_EMP테이블에서 급여가 가장 많은 사원의
+--   사원번호, 사원명, 직종명, 급여 항목을 조회하는 쿼리문을 구성한다.
+
+-- 급여를 가장 많이 받는 사원의 급여
+SELECT MAX(SAL)
+FROM TBL_EMP;
+--==>> 5000
+
+
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE 급여가 가장 많은 사원;
+
+
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE SAL = (급여가 가장 많은 사원);
+
+
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE SAL = (SELECT MAX(SAL)
+             FROM TBL_EMP);
+--==>>7839	KING	PRESIDENT	5000
+
+--  『=ANY』
+-- 하나라도 만족하면
+
+--  『=ALL』
+-- 모두 만족하면
+
+
+SELECT SAL
+FROM TBL_EMP;
+--==>>
+/*
+800
+1600
+1250
+2975
+1250
+2850
+2450
+3000
+5000
+1500
+1100
+950
+3000
+1300
+1500
+2000
+1700
+2500
+1000
+*/
+
+SELECT EMPNO, ENAME, JOB,SAL
+FROM TBL_EMP
+WHERE SAL =ANY(800,1600,1250,2975,1250,2850,2450,3000,5000,1500,1100,950,3000,1300,1500,2000,1700,2500,1000);
+--==>>
+/*
+7369	SMITH	CLERK	    800
+7499	ALLEN	SALESMAN	1600
+7521	WARD	SALESMAN	1250
+7566	JONES	MANAGER	    2975
+7654	MARTIN	SALESMAN	1250
+7698	BLAKE	MANAGER	    2850
+7782	CLARK	MANAGER	    2450
+7788	SCOTT	ANALYST	    3000
+7839	KING	PRESIDENT	5000
+7844	TURNER	SALESMAN	1500
+7876	ADAMS	CLERK	    1100
+7900	JAMES	CLERK	    950
+7902	FORD	ANALYST	    3000
+7934	MILLER	CLERK	    1300
+8001	김태민	CLERK	    1500
+8002	조현하	CLERK	    2000
+8003	김보경	SALESMAN	1700
+8004	유동현	SALESMAN	2500
+8005	장현성	SALESMAN	1000
+*/
+
+
+SELECT EMPNO, ENAME, JOB,SAL
+FROM TBL_EMP
+WHERE SAL >= ANY(800,1600,1250,2975,1250,2850,2450,3000,5000,1500,1100,950,3000,1300,1500,2000,1700,2500,1000);
+--==>>
+/*
+7369	SMITH	CLERK	    800
+7499	ALLEN	SALESMAN	1600
+7521	WARD	SALESMAN	1250
+7566	JONES	MANAGER	    2975
+7654	MARTIN	SALESMAN	1250
+7698	BLAKE	MANAGER	    2850
+7782	CLARK	MANAGER	    2450
+7788	SCOTT	ANALYST	    3000
+7839	KING	PRESIDENT	5000
+7844	TURNER	SALESMAN	1500
+7876	ADAMS	CLERK	    1100
+7900	JAMES	CLERK	    950
+7902	FORD	ANALYST	    3000
+7934	MILLER	CLERK	    1300
+8001	김태민	CLERK	    1500
+8002	조현하	CLERK	    2000
+8003	김보경	SALESMAN	1700
+8004	유동현	SALESMAN	2500
+8005	장현성	SALESMAN	1000
+*/
+
+
+SELECT EMPNO, ENAME, JOB,SAL
+FROM TBL_EMP
+WHERE SAL >= ALL(800,1600,1250,2975,1250,2850,2450,3000,5000,1500,1100,950,3000,1300,1500,2000,1700,2500,1000);
+--==>>7839	KING	PRESIDENT	5000
+
+
+SELECT EMPNO, ENAME, JOB,SAL
+FROM TBL_EMP
+WHERE SAL >= ALL(   SELECT SAL
+                    FROM TBL_EMP);
+--==>>7839	KING	PRESIDENT	5000
+
+
+--○ TBL_EMP 테이블에서 20번 부서에 근무하는 사원들 중
+--   급여가 가장 많은 사원의
+--   사원번호, 사원명, 직종명, 급여 항목을 조회하는 쿼리문을 구성한다
+
+SELECT *
+FROM TBL_EMP
+WHERE DEPTNO=20;
+
+SELECT EMPNO,ENAME,JOB,SAL
+FROM TBL_EMP
+WHERE DEPTNO=20
+    AND SAL >= ALL(SELECT SAL
+                   FROM TBL_EMP
+                   WHERE DEPTNO=20);
+                   
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE SAL = (SELECT MAX(SAL)
+             FROM TBL_EMP)
+    AND DEPTNO =20;
+--==>>조회 결과 없음
+
+                   
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE SAL = (SELECT MAX(SAL)
+             FROM TBL_EMP
+             WHERE DEPTNO =20)
+    AND DEPTNO =20;    --두개가 사실 다른 조건임
+
+
+SELECT EMPNO, ENAME, JOB, SAL
+FROM TBL_EMP
+WHERE SAL >= ALL (  SELECT SAL
+                    FROM TBL_EMP
+                    WHERE DEPTNO =20)
+    AND DEPTNO =20;
+    
+    
+--○ TBL_EMP 테이블에서 수당(커미션, COMM)이 가장 많은 사원의
+--   사원번호, 사원명, 부서번호, 직종명, 커미션 항목을 조회한다.
+
+
+SELECT EMPNO, ENAME, DEPTNO, JOB, COMM
+FROM TBL_EMP
+WHERE COMM = (  SELECT MAX(COMM)
+                FROM TBL_EMP);
+                
+SELECT EMPNO"사원번호",ENAME "사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"
+FROM TBL_EMP
+WHERE COMM >=ALL(SELECT NVL(COMM,0)
+                FROM TBL_EMP);
+                
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE 수당(커미션,COMM)이 가장 많은 사원;
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE COMM = (모든 직원들 중 최고 커미션);
+
+
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE COMM = (  SELECT MAX(COMM)
+                FROM TBL_EMP);
+--==>>7654	MARTIN	30	SALESMAN	1400
+
+
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE COMM >=ALL (  SELECT COMM
+                    FROM TBL_EMP);
+--==>>조회 결과 없음
+
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE COMM >=ALL (  SELECT COMM
+                    FROM TBL_EMP);
+--==>>
+/*
+(null)
+300
+500
+(null)
+1400
+(null)
+(null)
+(null)
+(null)
+0
+(null)
+(null)
+(null)
+(null)
+10
+10
+(null)
+(null)
+(null)
+*/
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"                
+FROM TBL_EMP
+WHERE COMM >=ALL (NULL,300,500,NULL,1400,NULL,NULL,NULL,,NULL,0,NULL,NULL,NULL,NULL,10,10,NULL,NULL,NULL);
+
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"
+FROM TBL_EMP
+WHERE COMM >=ALL (SELECT NVL(COMM,0)
+                  FROM TBL_EMP);
+ --==>>7654	MARTIN	30	SALESMAN	1400
+ 
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"
+FROM TBL_EMP
+WHERE COMM >=ALL (SELECT COMM
+                  FROM TBL_EMP
+                  WHERE COMM IS NOT NULL);     
+--==>>
+/*
+300
+500
+1400
+0
+10
+10
+*/
+
+
+SELECT EMPNO"사원번호",ENAME"사원명",DEPTNO"부서번호",JOB"직종명",COMM"커미션"
+FROM TBL_EMP
+WHERE COMM >=ALL (300,500,1400,0,10,10);     
+--==>>7654	MARTIN	30	SALESMAN	1400
+
+
+--○ DISTINCT() 중복 행(레코드)을 제거하는 함수
+
+-- TBL_EMP 테이블에서 관리자로 등록된 사원의
+-- 사원번호, 사원명, 직종명을 조회한다
+
+SELECT T2.EMPNO"사원번호",T2.ENAME"사원명",T2.JOB"직종명"
+FROM 
+(
+    SELECT MGR
+    FROM TBL_EMP
+    GROUP BY MGR
+)T
+JOIN
+(
+SELECT *
+FROM TBL_EMP
+)T2
+ON T.MGR = T2.EMPNO;
+--==>>
+/*
+7566	JONES	MANAGER
+7698	BLAKE	MANAGER
+7782	CLARK	MANAGER
+7788	SCOTT	ANALYST
+7839	KING	PRESIDENT
+7902	FORD	ANALYST
+*/
+
+SELECT *
+FROM TBL_EMP
+
+
+SELECT EMPNO,ENAME,JOB
+FROM TBL_EMP
+WHERE 관리자로 등록된 사원;
+
+
+SELECT EMPNO,ENAME,JOB
+FROM TBL_EMP
+WHERE 사원번호 = (관리자(MGR)로 등록된 사원);
+
+
+SELECT EMPNO,ENAME,JOB
+FROM TBL_EMP
+WHERE EMPNO IN = (7902,7698,...);
+
+SELECT EMPNO,ENAME,JOB
+FROM TBL_EMP
+WHERE EMPNO IN  (  SELECT MGR
+                    FROM TBL_EMP);
+
+SELECT DISTINCT(MGR)
+FROM TBL_EMP;
+
+
+
+
+SELECT EMPNO,ENAME,JOB
+FROM TBL_EMP
+WHERE EMPNO IN  (  SELECT DISTINCT(MGR)
+                    FROM TBL_EMP);
+--==>>     
+/*
+7902	FORD	ANALYST
+7698	BLAKE	MANAGER
+7839	KING	PRESIDENT
+7566	JONES	MANAGER
+7788	SCOTT	ANALYST
+7782	CLARK	MANAGER
+결과는 똑같지만 리소스 소모가 훨씬 덜하다 (중복된거 제외)
+*/
+    
+    
+SELECT JOB    
+FROM TBL_EMP;
+--==>>
+/*
+CLERK
+SALESMAN
+SALESMAN
+MANAGER
+SALESMAN
+MANAGER
+MANAGER
+ANALYST
+PRESIDENT
+SALESMAN
+CLERK
+CLERK
+ANALYST
+CLERK
+CLERK
+CLERK
+SALESMAN
+SALESMAN
+SALESMAN
+*/
+SELECT DISTINCT(JOB)
+FROM TBL_EMP;
+--==>>
+/*
+CLERK
+SALESMAN
+PRESIDENT
+MANAGER
+ANALYST
+*/
+
+
+SELECT DEPTNO
+FROM TBL_EMP;
+--==>>
+/*
+20
+30
+30
+20
+30
+30
+10
+20
+10
+30
+20
+30
+20
+10
+
+
+
+
+
+*/
+
+SELECT DISTINCT(DEPTNO)
+FROM TBL_EMP;
+--==>>
+/*
+30
+
+20
+10
+*/
+
+--------------------------------------------------------------------------------
+SELECT *
+FROM TBL_SAWON;
+
+
+
+--○ TBL_SAWON 테이블 백업(데이터 위주) → 각 테이블 간의 관계나 제약조건 등은 제외한 상태
+CREATE TABLE TBL_SAWONBACKUP
+AS
+SELECT *
+FROM TBL_SAWON;
+--==>>Table TBL_SAWONBACKUP이(가) 생성되었습니다.
+-- TBL_SAWON 테이블의 데이터들만 백업을 수행
+-- 즉, 다른 이름의 테이블 형태로 저장해 둔 상황
+
+--○ 데이터 수정
+UPDATE TBL_SAWON
+SET SANAME ='똘똘이';
+--WHERE SANO = 1005;
+COMMIT;
+
+SELECT *
+FROM TBL_SAWON;
+
+ROLLBACK;
+
+UPDATE TBL_SAWON
+SET SANAME = (SELECT SANAME 
+            FROM TBL_SAWONBACKUP)
+WHERE SANAME = '똘똘이';
+
+
+
+
+UPDATE TBL_SAWON
+SET SANAME = (SELECT SANAME 
+            FROM TBL_SAWONBACKUP
+            WHERE SANO = TBL_SAWON.SANO)
+WHERE SANAME = '똘똘이';
+
+SELECT *
+FROM TBL_SAWON;
+
+COMMIT;
